@@ -32,4 +32,4 @@ export const PLAN_DATA: Record<PaymentPlan, PlanInfo> = {
   },
 };
 
-export const BackendURL = `${import.meta.env.}api/payments;
+// export const BackendURL = `https://flashfire-jobs-payment-app.onrender.com/api/payments`;
