@@ -90,7 +90,7 @@ const AdminPage: React.FC = () => {
                     <div className="header-subtitle">
                         <h2>Payment Link Generator</h2>
                         <p>
-                            Generate custom payment links for your Flash Fire
+                            Generate Customized Payment Links for your Flashfire
                             Jobs plans
                         </p>
                     </div>
