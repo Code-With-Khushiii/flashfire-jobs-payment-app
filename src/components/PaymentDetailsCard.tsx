@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { PaymentDetails, PLAN_DATA } from "../types";
 import { Clock, Copy } from "lucide-react";
 
@@ -33,11 +33,16 @@ const PaymentDetailsCard: React.FC<PaymentDetailsCardProps> = ({
 
      const value = getPlanValue(formData?.plan as PlanType);
 
-     const paymentId = `${Math.random().toString(36).substr(2, 9)}-${Math.random()
-          .toString(36)
-          .substr(2, 4)}-${Math.random().toString(36).substr(2, 4)}-${Math.random()
-               .toString(36)
-               .substr(2, 4)}-${Math.random().toString(36).substr(2, 12)}`;
+    const paymentIdRef = useRef(
+         `${Math.random().toString(36).substr(2, 9)}-${Math.random()
+              .toString(36)
+              .substr(2, 4)}-${Math.random()
+              .toString(36)
+              .substr(2, 4)}-${Math.random().toString(36).substr(2, 4)}-${Math.random()
+              .toString(36)
+              .substr(2, 12)}`
+    );
+    const paymentId = paymentIdRef.current;
 
      const copyToClipboard = (text: string) => {
           navigator.clipboard.writeText(text);
