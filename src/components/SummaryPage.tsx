@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from "react"
-import { AlertCircle, Clock, RefreshCcw, Home } from "lucide-react"
+import { AlertCircle, Clock, RefreshCcw } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { BackendURL, type PaymentDetails, PLAN_DATA } from "../types"
 import Header from "./Header"
@@ -60,10 +60,6 @@ const SummaryPage: React.FC = () => {
     }
   }
 
-  const handleReturnHome = () => {
-    window.location.href = window.location.origin
-  }
-
   if (isLoading) {
     return <div>Loading...</div>
   }
@@ -106,15 +102,6 @@ const SummaryPage: React.FC = () => {
             </div>
           </div>
 
-          {/* <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={handleReturnHome}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-orange-200 px-4 py-3 text-sm font-semibold text-orange-600 transition hover:bg-orange-50"
-            >
-              <Home className="h-4 w-4" />
-              Return Home
-            </button>
-          </div> */}
         </div>
       </div>
     )
