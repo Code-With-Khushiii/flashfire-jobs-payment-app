@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from "react"
-import { AlertCircle, Clock, Mail, RefreshCcw, Home } from "lucide-react"
+import { AlertCircle, Clock, RefreshCcw, Home } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { BackendURL, type PaymentDetails, PLAN_DATA } from "../types"
 import Header from "./Header"
