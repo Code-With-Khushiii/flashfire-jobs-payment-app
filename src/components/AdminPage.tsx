@@ -43,6 +43,35 @@ const AdminPage: React.FC = () => {
         setIsFormSubmitted(true); // Update summary live
     };
 
+    const copyToClipboard = async (text: string) => {
+        // Prefer the modern clipboard API when the document has focus.
+        if (navigator.clipboard && document.hasFocus()) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (error) {
+                console.warn("Navigator clipboard write failed, falling back:", error);
+            }
+        }
+
+        // Fallback for browsers/contexts where the async Clipboard API is unavailable or blocked.
+        try {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.setAttribute("readonly", "");
+            textArea.style.position = "absolute";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.select();
+            const successful = document.execCommand("copy");
+            document.body.removeChild(textArea);
+            return successful;
+        } catch (error) {
+            console.error("Fallback clipboard copy failed:", error);
+            return false;
+        }
+    };
+
     const handleGeneratePaymentLink = async () => {
         if (!formData.name || !formData.email || !formData.plan) {
             alert("Please fill in all required fields");
@@ -71,8 +100,14 @@ const AdminPage: React.FC = () => {
             );
             const id = response.data._id;
             const link = `${window.location.origin}/${id}`;
-            navigator.clipboard.writeText(link);
-            alert(`Payment link copied to clipboard: ${link}`);
+            const copied = await copyToClipboard(link);
+            if (copied) {
+                alert(`Payment link copied to clipboard: ${link}`);
+            } else {
+                alert(
+                    `Payment link generated but copy failed. Please copy it manually:\n${link}`
+                );
+            }
         } catch (error) {
             console.error("Error creating payment:", error);
             alert("Failed to generate payment link.");

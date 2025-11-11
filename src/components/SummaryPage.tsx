@@ -1,7 +1,7 @@
 
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { AlertCircle, Clock, Mail, RefreshCcw, Home } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { BackendURL, type PaymentDetails, PLAN_DATA } from "../types"
 import Header from "./Header"
@@ -60,42 +60,67 @@ const SummaryPage: React.FC = () => {
     }
   }
 
+  const handleReturnHome = () => {
+    window.location.href = window.location.origin
+  }
+
   if (isLoading) {
     return <div>Loading...</div>
   }
 
- if (isExpired) {
-  return (
-    <div className="payment-summary-container min-h-screen flex items-center justify-center ">
-      <div className="app-scale-wrapper max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        
-        {/* LEFT SECTION */}
-        <div className="bg-white shadow-xl rounded-2xl p-6 flex flex-col justify-center border border-orange-200">
-          <Header dueDate={formData.dueDate} timeRemaining={0} />
-        </div>
+  if (isExpired) {
+    return (
+      <div className="payment-summary-container min-h-screen flex items-center justify-center bg-slate-50 px-4 py-16">
+        <div className="w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-10 shadow-xl">
+          <div className="flex items-start gap-4">
+            <span className="rounded-full bg-orange-100 p-3 text-orange-600">
+              <AlertCircle className="h-6 w-6" />
+            </span>
+            <div>
+              <h2 className="text-2xl font-semibold text-slate-900">Payment Link Expired</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                This secure payment link is no longer active. To protect your information, we automatically expire links
+                after a limited window. Request a refreshed link to continue with your enrollment.
+              </p>
+            </div>
+          </div>
 
-        {/* RIGHT SECTION */}
-        <div className="bg-white shadow-xl rounded-2xl p-8 flex flex-col items-center justify-center text-center border border-orange-200">
-          <h2 className="text-2xl font-bold text-orange-700 flex items-center gap-2">
-            ⏰ Payment Link Expired
-          </h2>
-          <p className="text-gray-600 mt-4">
-            This payment link has expired.
-          </p>
-          <p className="text-gray-500 text-sm mb-6">
-            Please contact <span className="font-semibold">FlashFire Jobs</span> to request a new payment link.
-          </p>
-          <button
-            onClick={() => (window.location.href = window.location.origin)}
-            className="bg-green-500 text-white py-2 px-6 rounded-xl hover:bg-green-700 transition"
-          >
-            🏠 Return to Home
-          </button>
+          <div className="mt-6 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+            <div className="flex items-start gap-3 rounded-lg bg-slate-50 p-3">
+              <Clock className="mt-1 h-4 w-4 text-slate-400" />
+              <div>
+                <p className="font-medium text-slate-700">Link window closed</p>
+                <p>
+                  {formData.dueDate
+                    ? `This link expired on ${formData.dueDate}.`
+                    : "The secure link has exceeded the allowed time frame."}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 rounded-lg bg-slate-50 p-3">
+              <RefreshCcw className="mt-1 h-4 w-4 text-slate-400" />
+              <div>
+                <p className="font-medium text-slate-700">Request a replacement</p>
+                <p>Contact your FlashFire specialist or email our support team for a new link.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={handleReturnHome}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-orange-200 px-4 py-3 text-sm font-semibold text-orange-600 transition hover:bg-orange-50"
+            >
+              <Home className="h-4 w-4" />
+              Return Home
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+
+  const expirationTime = formData.dueDate ? new Date(formData.dueDate).getTime() : null
 
   return (
     <div className="payment-summary-container">
@@ -105,9 +130,13 @@ const SummaryPage: React.FC = () => {
           <PaymentDetailsCard
             formData={formData}
             timeRemaining={timeRemaining}
-            expirationTime={new Date(formData.dueDate || "").getTime()}
+            expirationTime={expirationTime}
           />
-          <PaymentOptionsCard customPayPalLink={customPayPalLink} plan={formData.plan} handlePayNow={handlePayNow} />
+          <PaymentOptionsCard
+            customPayPalLink={customPayPalLink}
+            plan={formData.plan}
+            handlePayNow={handlePayNow}
+          />
         </div>
         {/* Refund Policy Section */}
         {/* <div className="refund-policy">

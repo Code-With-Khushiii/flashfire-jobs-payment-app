@@ -44,8 +44,31 @@ const PaymentDetailsCard: React.FC<PaymentDetailsCardProps> = ({
     );
     const paymentId = paymentIdRef.current;
 
-     const copyToClipboard = (text: string) => {
-          navigator.clipboard.writeText(text);
+     const copyToClipboard = async (text: string) => {
+          if (navigator.clipboard && document.hasFocus()) {
+               try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+               } catch (error) {
+                    console.warn("Navigator clipboard write failed, falling back:", error);
+               }
+          }
+
+          try {
+               const textArea = document.createElement("textarea");
+               textArea.value = text;
+               textArea.setAttribute("readonly", "");
+               textArea.style.position = "absolute";
+               textArea.style.left = "-9999px";
+               document.body.appendChild(textArea);
+               textArea.select();
+               const successful = document.execCommand("copy");
+               document.body.removeChild(textArea);
+               return successful;
+          } catch (error) {
+               console.error("Fallback clipboard copy failed:", error);
+               return false;
+          }
      };
 
      return (
@@ -103,7 +126,14 @@ const PaymentDetailsCard: React.FC<PaymentDetailsCardProps> = ({
                          <span className="flex items-center gap-2">
                               <span className="text-xs font-mono text-gray-900">{paymentId}</span>
                               <button
-                                   onClick={() => copyToClipboard(paymentId)}
+                                   onClick={async () => {
+                                        const copied = await copyToClipboard(paymentId);
+                                        if (!copied) {
+                                             alert(
+                                                  `Copy failed. Please copy manually:\n${paymentId}`
+                                             );
+                                        }
+                                   }}
                                    className="text-gray-400 hover:text-gray-600"
                               >
                                    <Copy className="w-4 h-4" />

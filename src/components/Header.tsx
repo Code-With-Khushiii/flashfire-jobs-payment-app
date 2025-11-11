@@ -1,6 +1,20 @@
-import type React from "react"
+import React from "react"
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  dueDate?: string
+  timeRemaining: number
+}
+
+const Header: React.FC<HeaderProps> = ({ dueDate, timeRemaining }) => {
+  const hasCountdown = Number.isFinite(timeRemaining) && timeRemaining > 0
+
+  const formatTime = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const secs = seconds % 60
+    return `${hours}h ${minutes}m ${secs}s`
+  }
+
   return (
     <header className="bg-white p-6 flex flex-col items-center text-center">
       {/* Logo Only */}
@@ -20,6 +34,12 @@ const Header: React.FC = () => {
         <p className="text-sm text-gray-500">
           Please use any of the following options to complete your payment.
         </p>
+        {(dueDate || hasCountdown) && (
+          <div className="mt-2 text-xs text-gray-500">
+            {dueDate && <p>Due date: {dueDate}</p>}
+            {hasCountdown && <p>Link expires in: {formatTime(timeRemaining)}</p>}
+          </div>
+        )}
       </div>
     </header>
   )
