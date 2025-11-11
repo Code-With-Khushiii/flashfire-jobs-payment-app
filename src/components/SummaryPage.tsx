@@ -9,6 +9,15 @@ import PaymentDetailsCard from "./PaymentDetailsCard"
 import PaymentOptionsCard from "./PaymentOptionsCard"
 import axios from "axios"
 
+const toLocalMidnightTime = (dateString?: string): number | null => {
+  if (!dateString) return null
+
+  const normalized = dateString.includes("T") ? dateString : `${dateString}T00:00:00`
+  const date = new Date(normalized)
+  const time = date.getTime()
+  return Number.isNaN(time) ? null : time
+}
+
 const SummaryPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [formData, setFormData] = useState<Partial<PaymentDetails>>({})
@@ -33,7 +42,7 @@ const SummaryPage: React.FC = () => {
 
         const createdAtTime = data.createdAt ? new Date(data.createdAt).getTime() : null
         const linkExpiresAtTime = data.linkExpiresAt ? new Date(data.linkExpiresAt).getTime() : null
-        const dueDateTime = data.dueDate ? new Date(data.dueDate).getTime() : null
+        const dueDateTime = toLocalMidnightTime(data.dueDate)
         const expiration = linkExpiresAtTime ?? (createdAtTime ? createdAtTime + 24 * 60 * 60 * 1000 : dueDateTime)
 
         setLinkExpirationTime(expiration)
