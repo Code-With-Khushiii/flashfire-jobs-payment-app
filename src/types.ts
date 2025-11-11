@@ -10,6 +10,8 @@ export interface PaymentDetails {
   description: string;
   finalAmount: number;
   paymentLink?: string;
+  createdAt?: string;
+  linkExpiresAt?: string;
 }
 
 export interface PlanInfo {

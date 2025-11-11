@@ -15,9 +15,12 @@ const SummaryPage: React.FC = () => {
   const [customPayPalLink, setCustomPayPalLink] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isExpired, setIsExpired] = useState(false)
-  const [timeRemaining, setTimeRemaining] = useState<number>(0) // For due date countdown
+  const [timeRemaining, setTimeRemaining] = useState<number>(0) // For countdown
+  const [linkExpirationTime, setLinkExpirationTime] = useState<number | null>(null)
 
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | undefined
+
     const fetchPayment = async () => {
       try {
         const response = await axios.get(`${BackendURL}/${id}`)
@@ -27,30 +30,48 @@ const SummaryPage: React.FC = () => {
           dueDate: data.dueDate ? new Date(data.dueDate).toISOString().split("T")[0] : "",
         })
         setCustomPayPalLink(data.paymentLink || "")
-        const dueDateTime = new Date(data.dueDate).getTime()
+
+        const createdAtTime = data.createdAt ? new Date(data.createdAt).getTime() : null
+        const linkExpiresAtTime = data.linkExpiresAt ? new Date(data.linkExpiresAt).getTime() : null
+        const expiration = linkExpiresAtTime ?? (createdAtTime ? createdAtTime + 24 * 60 * 60 * 1000 : null)
+
+        setLinkExpirationTime(expiration)
+
         const now = Date.now()
-        if (dueDateTime < now) {
+        if (!expiration || expiration <= now) {
           setIsExpired(true)
+          setTimeRemaining(0)
         } else {
-          // Start countdown for due date
-          const interval = setInterval(() => {
-            const remaining = Math.max(0, Math.floor((dueDateTime - Date.now()) / 1000))
+          setIsExpired(false)
+          setTimeRemaining(Math.floor((expiration - now) / 1000))
+
+          intervalId = setInterval(() => {
+            const remaining = Math.max(0, Math.floor((expiration - Date.now()) / 1000))
             setTimeRemaining(remaining)
             if (remaining <= 0) {
               setIsExpired(true)
-              clearInterval(interval)
+              if (intervalId) {
+                clearInterval(intervalId)
+                intervalId = undefined
+              }
             }
           }, 1000)
-          return () => clearInterval(interval)
         }
       } catch (error) {
         console.error("Error fetching payment:", error)
         setIsExpired(true) // Treat as expired if not found
+        setLinkExpirationTime(null)
       } finally {
         setIsLoading(false)
       }
     }
     fetchPayment()
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
   }, [id])
 
   const handlePayNow = () => {
@@ -107,7 +128,7 @@ const SummaryPage: React.FC = () => {
     )
   }
 
-  const expirationTime = formData.dueDate ? new Date(formData.dueDate).getTime() : null
+  const expirationTime = linkExpirationTime
 
   return (
     <div className="payment-summary-container">
