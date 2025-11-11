@@ -33,12 +33,13 @@ const SummaryPage: React.FC = () => {
 
         const createdAtTime = data.createdAt ? new Date(data.createdAt).getTime() : null
         const linkExpiresAtTime = data.linkExpiresAt ? new Date(data.linkExpiresAt).getTime() : null
-        const expiration = linkExpiresAtTime ?? (createdAtTime ? createdAtTime + 24 * 60 * 60 * 1000 : null)
+        const dueDateTime = data.dueDate ? new Date(data.dueDate).getTime() : null
+        const expiration = linkExpiresAtTime ?? (createdAtTime ? createdAtTime + 24 * 60 * 60 * 1000 : dueDateTime)
 
         setLinkExpirationTime(expiration)
 
         const now = Date.now()
-        if (!expiration || expiration <= now) {
+        if (!expiration || Number.isNaN(expiration) || expiration <= now) {
           setIsExpired(true)
           setTimeRemaining(0)
         } else {
