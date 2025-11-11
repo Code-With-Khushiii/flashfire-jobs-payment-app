@@ -71,7 +71,7 @@ const SummaryPage: React.FC = () => {
   if (isExpired) {
     return (
       <div className="payment-summary-container min-h-screen flex items-center justify-center bg-slate-50 px-4 py-16">
-        <div className="w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-10 shadow-xl">
+        <div className="w-full max-w-2xl border border-slate-200 bg-white p-10 shadow-xl">
           <div className="flex items-start gap-4">
             <span className="rounded-full bg-orange-100 p-3 text-orange-600">
               <AlertCircle className="h-6 w-6" />
@@ -106,7 +106,7 @@ const SummaryPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          {/* <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button
               onClick={handleReturnHome}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-orange-200 px-4 py-3 text-sm font-semibold text-orange-600 transition hover:bg-orange-50"
@@ -114,7 +114,7 @@ const SummaryPage: React.FC = () => {
               <Home className="h-4 w-4" />
               Return Home
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     )
