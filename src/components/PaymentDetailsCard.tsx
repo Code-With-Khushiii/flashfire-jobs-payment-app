@@ -189,6 +189,13 @@ const PaymentDetailsCard: React.FC<PaymentDetailsCardProps> = ({
                          <span className="text-gray-900">N/a</span>
                     </div>
                </div>
+
+               {/* Note Section */}
+               <div className="border border-gray-200 rounded-lg max-w-4xl p-5 bg-gray-50 mt-4">
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                         <strong>Note:</strong> We take your success seriously. Our commitment extends beyond scheduling interviews — we work with you strategically to help convert those interviews into real job offers. Once your payment is confirmed, you will receive an official invoice via email, and our onboarding team will activate your account within 24 hours. You'll gain access to your personalized dashboard, detailed next steps, and continuous 24/7 support from our expert team dedicated to your success.
+                    </p>
+               </div>
           </div>
      );
 };
